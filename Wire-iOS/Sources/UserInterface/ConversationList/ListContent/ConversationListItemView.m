@@ -44,6 +44,7 @@ NSString * const ConversationListItemDidScrollNotification = @"ConversationListI
 @property (nonatomic, strong) UILabel *titleField;
 @property (nonatomic, strong) UILabel *subtitleField;
 @property (nonatomic, strong) UIView *lineView;
+@property (nonatomic, strong) UIVisualEffectView *lineViewContainer;
 
 @property (nonatomic, strong) NSLayoutConstraint *titleTwoLineConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *titleOneLineConstraint;
@@ -79,6 +80,7 @@ NSString * const ConversationListItemDidScrollNotification = @"ConversationListI
 
 - (void)setupConversationListItemView
 {
+
     self.labelsContainer = [[UIView alloc] initForAutoLayout];
     [self addSubview:self.labelsContainer];
     
@@ -100,10 +102,13 @@ NSString * const ConversationListItemDidScrollNotification = @"ConversationListI
     [self addSubview:self.rightAccessory];
 
     [self createSubtitleField];
-    
+
+
+    self.lineViewContainer = [[UIVisualEffectView alloc] initWithEffect:[UIVibrancyEffect effectForBlurEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]]];
     self.lineView = [[UIView alloc] initForAutoLayout];
-    self.lineView.backgroundColor = [UIColor colorWithWhite:1.0f alpha:0.08f];
-    [self addSubview:self.lineView];
+    self.lineView.backgroundColor = [UIColor colorWithWhite:0.3f alpha:1];
+    [self.lineViewContainer.contentView addSubview:self.lineView];
+    [self addSubview:self.lineViewContainer];
     
     [self.rightAccessory setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
     
@@ -159,11 +164,12 @@ NSString * const ConversationListItemDidScrollNotification = @"ConversationListI
         
         [self.rightAccessory autoAlignAxisToSuperviewAxis:ALAxisHorizontal];
         [self.rightAccessory autoPinEdgeToSuperviewEdge:ALEdgeTrailing withInset:16.0];
-        
-        [self.lineView autoSetDimension:ALDimensionHeight toSize:UIScreen.hairline];
-        [self.lineView autoPinEdgeToSuperviewEdge:ALEdgeBottom];
-        [self.lineView autoPinEdge:ALEdgeTrailing toEdge:ALEdgeTrailing ofView:self withOffset:0.0];
-        [self.lineView autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:self.titleField];
+
+        [self.lineView autoPinEdgesToSuperviewEdges];
+        [self.lineViewContainer autoSetDimension:ALDimensionHeight toSize:UIScreen.hairline];
+        [self.lineViewContainer autoPinEdgeToSuperviewEdge:ALEdgeBottom];
+        [self.lineViewContainer autoPinEdge:ALEdgeTrailing toEdge:ALEdgeTrailing ofView:self withOffset:0.0];
+        [self.lineViewContainer autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:self.titleField];
     }];
 }
 
