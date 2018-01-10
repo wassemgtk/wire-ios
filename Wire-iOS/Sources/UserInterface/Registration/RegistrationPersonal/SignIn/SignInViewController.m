@@ -184,10 +184,6 @@
         return; // Return if transition is done or already in progress
     }
 
-    if (toViewController.parentViewController != fromViewController.parentViewController) {
-        return; // toViewController & fromViewController must have a common parent view controller
-    }
-
     [self updateSignInButtonsForPresentedViewController:toViewController];
     self.presentedSignInViewController = toViewController;
     
@@ -198,6 +194,10 @@
     toViewController.view.frame = fromViewController.view.frame;
     [toViewController.view layoutIfNeeded];
     
+    if (toViewController.parentViewController != fromViewController.parentViewController) {
+        return; // toViewController & fromViewController must have a common parent view controller
+    }
+
     [self transitionFromViewController:fromViewController
                       toViewController:toViewController
                               duration:0.35 options:UIViewAnimationOptionTransitionCrossDissolve
