@@ -183,7 +183,11 @@
     if ([self.childViewControllers containsObject:toViewController]) {
         return; // Return if transition is done or already in progress
     }
-    
+
+    if (toViewController.parentViewController != fromViewController.parentViewController) {
+        return; // toViewController & fromViewController must have a common parent view controller
+    }
+
     [self updateSignInButtonsForPresentedViewController:toViewController];
     self.presentedSignInViewController = toViewController;
     
