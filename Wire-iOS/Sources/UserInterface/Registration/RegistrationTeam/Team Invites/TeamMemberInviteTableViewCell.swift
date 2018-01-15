@@ -19,11 +19,27 @@
 import UIKit
 import Cartography
 
-fileprivate extension InviteResult {
+fileprivate extension InviteViewModel {
     var iconType: ZetaIconType {
         switch self {
+        case .loading: return .spinner
         case .success: return .checkmark
         case .failure: return .exclamationMarkCircle
+        }
+    }
+}
+
+enum InviteViewModel {
+    case loading(email: String)
+    case success(email: String)
+    case failure(email: String, errorMessage: String)
+    
+    init(_ inviteResult: InviteResult) {
+        switch inviteResult {
+        case .success(email: let email):
+            self = .success(email: email)
+        case let .failure(email: email, error: error):
+            self = .failure(email: email, errorMessage: error.errorDescription)
         }
     }
 }
@@ -35,16 +51,19 @@ final class TeamMemberInviteTableViewCell: UITableViewCell {
     private let stackView = UIStackView()
     private let iconImageView = UIImageView()
     
-    var content: InviteResult? {
+    var viewModel: InviteViewModel? {
         didSet {
-            switch content {
+            switch viewModel {
+            case .loading(let email)?:
+                errorLabel.isHidden = true
+                emailLabel.text = email
             case let .success(email)?:
                 errorLabel.isHidden = true
                 emailLabel.text = email
-            case let .failure(email, error)?:
+            case let .failure(email, errorMessage)?:
                 errorLabel.isHidden = false
                 emailLabel.text = email
-                errorLabel.text = error.errorDescription
+                errorLabel.text = errorMessage
             default: break
             }
             
