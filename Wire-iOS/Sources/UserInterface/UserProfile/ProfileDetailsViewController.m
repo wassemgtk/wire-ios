@@ -49,6 +49,7 @@
 #import "ProfileIncomingConnectionRequestFooterView.h"
 #import "ProfileUnblockFooterView.h"
 
+static NSString* ZMLogTag ZM_UNUSED = @"UI";
 
 typedef NS_ENUM(NSUInteger, ProfileViewContentMode) {
     ProfileViewContentModeUnknown,
@@ -118,7 +119,7 @@ typedef NS_ENUM(NSUInteger, ProfileUserAction) {
     [self createFooter];
     [self createGuestIndicator];
     
-    self.view.backgroundColor = [UIColor wr_colorFromColorScheme:ColorSchemeColorBackground];
+    self.view.backgroundColor = [UIColor wr_colorFromColorScheme:ColorSchemeColorContentBackground];
     self.stackViewContainer = [[UIView alloc] initForAutoLayout];
     [self.view addSubview:self.stackViewContainer];
     self.teamsGuestIndicator.hidden = !self.showGuestLabel;
@@ -565,7 +566,7 @@ typedef NS_ENUM(NSUInteger, ProfileUserAction) {
 - (void)openOneToOneConversation
 {
     if (self.fullUser == nil) {
-        DDLogError(@"No user to open conversation with");
+        ZMLogError(@"No user to open conversation with");
         return;
     }
     ZMConversation __block *conversation = nil;
