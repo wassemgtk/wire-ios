@@ -34,7 +34,7 @@
 - (BOOL)imageToolbarNeedsToBeCompact;
 - (void)updateImageMessageConstraintConstants;
 
-static ImageCache *imageCache(void);
++ (ImageCache *)imageCache;
 
 @end
 

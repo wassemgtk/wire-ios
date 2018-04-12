@@ -56,13 +56,14 @@ static NSString* ZMLogTag ZM_UNUSED = @"UI";
 
 @implementation ImageMessageCell
 
-static ImageCache *imageCache(void)
+static ImageCache *cache;
+static dispatch_once_t onceToken;
+
++ (ImageCache *)imageCache
 {
-    static ImageCache *cache;
-    static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         cache = [[ImageCache alloc] initWithName:@"ConversationImageTableCell.imageCache"];
-        cache.maxConcurrentOperationCount = 4; 
+        cache.maxConcurrentOperationCount = 4;
         cache.totalCostLimit = 1024 * 1024 * 10; // 10 MB
         cache.qualityOfService = NSQualityOfServiceUtility;
     });
