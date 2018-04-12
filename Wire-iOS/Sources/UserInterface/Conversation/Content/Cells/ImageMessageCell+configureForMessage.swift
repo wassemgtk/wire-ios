@@ -102,9 +102,9 @@ extension ImageMessageCell {
             }
 
             ///FIXME: creationBlock is not called after second refresh, isAnimatedGIF == true
-//            if isAnimatedGIF {
-//                ImageMessageCell.imageCache().removeImage(forCacheKey: Message.nonNilImageDataIdentifier(convMessage))
-//            }
+            if isAnimatedGIF && (self.fullImageView.animatedImage == nil || (self.fullImageView.animatedImage != nil && self.fullImageView.animatedImage.frameCount <= 1)) {
+                ImageMessageCell.imageCache().removeImage(forCacheKey: Message.nonNilImageDataIdentifier(convMessage))
+            }
 
             ImageMessageCell.imageCache().image(for: imageData, cacheKey: Message.nonNilImageDataIdentifier(convMessage), creationBlock: creationBlock, completion: completion)
         } else {
