@@ -18,7 +18,7 @@
 
 import Foundation
 
-fileprivate let zmLog = ZMSLog(tag: "ImageMessageCell")
+private let zmLog = ZMSLog(tag: "ImageMessageCell")
 
 extension ImageMessageCell {
     override open func configure(for convMessage: ZMConversationMessage?, layoutProperties: ConversationCellLayoutProperties?) {
@@ -52,11 +52,16 @@ extension ImageMessageCell {
         if let imageData = imageMessageData?.imageData, imageData.count > 0 {
             let isAnimatedGIF: Bool = imageMessageData!.isAnimatedGIF ///TODO: unwrap
 
+            print("🤛 time = \(Date().timeIntervalSince1970) isAnimatedGIF =\(isAnimatedGIF)")
+
             let creationBlock = { [weak self] (_ data: Data?) -> Any? in
-                ///TODO weak self
-                
                 var image: Any? = nil
+
+                print("💡 time = \(Date().timeIntervalSince1970) isAnimatedGIF =\(isAnimatedGIF)")
+
                 if let data = data {
+                    print("⚽ time = \(Date().timeIntervalSince1970) isAnimatedGIF =\(isAnimatedGIF)")
+
                     if isAnimatedGIF {
                         ///TODO: not gif?
                         // We MUST make a copy of the data here because FLAnimatedImage doesn't read coredata blobs efficiently
@@ -71,8 +76,7 @@ extension ImageMessageCell {
                         if let width = self?.imageSize.width, let height = self?.imageSize.height {
                             widthRatio = min(screenSize.width / width, 1.0)
                             minimumHeight = height * widthRatio
-                        }
-                        else {
+                        } else {
                             widthRatio = 1
                         }
 
@@ -97,8 +101,7 @@ extension ImageMessageCell {
             }
 
             ImageMessageCell.imageCache().image(for: imageData, cacheKey: Message.nonNilImageDataIdentifier(convMessage), creationBlock: creationBlock, completion: completion)
-        }
-        else {
+        } else {
             if convMessage.isObfuscated {
                 loadingView.isHidden = true
                 obfuscationView.isHidden = false
@@ -111,3 +114,4 @@ extension ImageMessageCell {
         }
     }
 }
+
