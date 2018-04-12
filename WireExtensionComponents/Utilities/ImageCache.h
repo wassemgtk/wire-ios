@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
       withCompletion:(nullable void (^)(UIImage *image, NSString *cacheKey))completion;
 
 /// Either creates the image in the background and caches it with the supplied cache key,
-/// or retrieves it from the cache.  Takes a block that actually creates the image from the
+/// or retrieves it from the cache. Takes a block that actually creates the image from the
 /// passed in data.
 - (void)imageForData:(NSData *)imageData cacheKey:(NSString *)cacheKey
        creationBlock:(nullable id (^)(NSData *data)) creation

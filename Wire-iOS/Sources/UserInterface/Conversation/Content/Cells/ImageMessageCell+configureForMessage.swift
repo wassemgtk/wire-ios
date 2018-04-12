@@ -50,7 +50,7 @@ extension ImageMessageCell {
         updateImageMessageConstraintConstants()
 
         if let imageData = imageMessageData?.imageData, imageData.count > 0 {
-            let isAnimatedGIF: Bool = imageMessageData!.isAnimatedGIF
+            let isAnimatedGIF: Bool = imageMessageData!.isAnimatedGIF ///TODO: why first call is not animated?
 
             print("🏀 time = \(Date().timeIntervalSince1970) isAnimatedGIF =\(isAnimatedGIF)")
 
@@ -91,7 +91,7 @@ extension ImageMessageCell {
             }
 
             let completion = {[weak self] (_ image: Any?, _ cacheKey: String?) -> Void in
-                print("🎾 time = \(Date().timeIntervalSince1970) isAnimatedGIF =\(isAnimatedGIF), image = \(String(describing: image))")
+                print("🎾 time = \(Date().timeIntervalSince1970), cacheKey=\(String(describing: cacheKey)) isAnimatedGIF =\(isAnimatedGIF), image = \(String(describing: image))")
                 if image != nil && self?.message != nil && cacheKey != nil && (cacheKey == Message.nonNilImageDataIdentifier(self?.message)) {
                     self?.setImage(image as! MediaAsset)
                 } else {
@@ -101,6 +101,7 @@ extension ImageMessageCell {
             }
 
             ///FIXME: creationBlock is not called after second refresh, isAnimatedGIF == true
+            ImageMessageCell.imageCache().removeImage(forCacheKey: Message.nonNilImageDataIdentifier(convMessage))
             ImageMessageCell.imageCache().image(for: imageData, cacheKey: Message.nonNilImageDataIdentifier(convMessage), creationBlock: creationBlock, completion: completion)
         } else {
             if convMessage.isObfuscated {
