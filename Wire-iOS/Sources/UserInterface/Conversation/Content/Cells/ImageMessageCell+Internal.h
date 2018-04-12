@@ -20,13 +20,36 @@
 #import "ImageMessageCell.h"
 @import WireExtensionComponents;
 
+@class ImageToolbarView;
+@class ImageCache;
+@class ObfuscationView;
+
 @interface ImageMessageCell (Interal)
 
 - (void)setImage:(id<MediaAsset>)image;
+- (BOOL)imageSmallerThanMinimumSize;
+- (CGSize)sizeForMessage:(id<ZMImageMessageData>)messageData;
+- (void)updateImageBorder;
+- (BOOL)imageToolbarFitsInsideImage;
+- (BOOL)imageToolbarNeedsToBeCompact;
+- (void)updateImageMessageConstraintConstants;
+
+static ImageCache *imageCache(void);
 
 @end
 
 @interface ImageMessageCell ()
+/// Can either be UIImage or FLAnimatedImage
+@property (nonatomic, strong) id<MediaAsset> image;
+
 @property (nonatomic) BOOL autoStretchVertically;
 @property (nonatomic) UIEdgeInsets defaultLayoutMargins;
+
+@property (nonatomic) CGSize originalImageSize;
+@property (nonatomic) CGSize imageSize;
+
+@property (nonatomic, strong) ImageToolbarView *imageToolbarView;
+@property (nonatomic, strong) UIView *imageViewContainer;
+@property (nonatomic, strong) ThreeDotsLoadingView *loadingView;
+@property (nonatomic, strong) ObfuscationView *obfuscationView;
 @end

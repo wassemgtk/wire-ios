@@ -42,15 +42,9 @@ static NSString* ZMLogTag ZM_UNUSED = @"UI";
 @interface ImageMessageCell ()
 
 @property (nonatomic, strong) FLAnimatedImageView *fullImageView;
-@property (nonatomic, strong) ThreeDotsLoadingView *loadingView;
-@property (nonatomic, strong) ImageToolbarView *imageToolbarView;
 @property (nonatomic, strong) UIView *imageViewContainer;
-@property (nonatomic, strong) ObfuscationView *obfuscationView;
 @property (nonatomic) SavableImage *savableImage;
 @property (nonatomic) UITapGestureRecognizer *imageTapRecognizer;
-
-/// Can either be UIImage or FLAnimatedImage
-@property (nonatomic, strong) id<MediaAsset> image;
 
 @property (nonatomic, strong) NSLayoutConstraint *imageWidthConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *imageAspectConstraint;
@@ -58,9 +52,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"UI";
 @property (nonatomic, strong) NSLayoutConstraint *imageRightConstraint;
 @property (nonatomic, strong) NSArray<NSLayoutConstraint *> *imageToolbarInsideConstraints;
 @property (nonatomic, strong) NSArray<NSLayoutConstraint *> *imageToolbarOutsideConstraints;
-
-@property (nonatomic) CGSize originalImageSize;
-@property (nonatomic) CGSize imageSize;
 
 @end
 
@@ -72,7 +63,7 @@ static ImageCache *imageCache(void)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         cache = [[ImageCache alloc] initWithName:@"ConversationImageTableCell.imageCache"];
-        cache.maxConcurrentOperationCount = 4;
+        cache.maxConcurrentOperationCount = 4; 
         cache.totalCostLimit = 1024 * 1024 * 10; // 10 MB
         cache.qualityOfService = NSQualityOfServiceUtility;
     });
@@ -286,99 +277,99 @@ static const CGFloat ImageToolbarMinimumSize = 192;
     return CGSizeApplyAffineTransform(messageData.originalSize, CGAffineTransformMakeScale(scaleFactor, scaleFactor));
 }
 
-- (void)configureForMessage:(id<ZMConversationMessage>)convMessage layoutProperties:(ConversationCellLayoutProperties *)layoutProperties
-{
-    if (! [Message isImageMessage:convMessage]) {
-        return;
-    }
-
-    [super configureForMessage:convMessage layoutProperties:layoutProperties];
-
-    id<ZMImageMessageData> imageMessageData = convMessage.imageMessageData;
-    
-    // request
-    [convMessage requestImageDownload]; // there is no harm in calling this if the full content is already available
-
-    CGFloat minimumMediaSize = 48.0;
-    
-    self.originalImageSize = [self sizeForMessage:imageMessageData];
-    self.imageSize = CGSizeMake(MAX(minimumMediaSize, self.originalImageSize.width),
-                                MAX(minimumMediaSize, self.originalImageSize.height));
-    
-    if (self.autoStretchVertically) {
-        self.fullImageView.contentMode = [self imageSmallerThanMinimumSize] ? UIViewContentModeLeft : UIViewContentModeScaleAspectFill;
-    } else if (self.showsPreview) {
-        BOOL isSmall = self.imageSize.height < [PreviewHeightCalculator standardCellHeight];
-        self.fullImageView.contentMode = isSmall ? UIViewContentModeScaleAspectFit : UIViewContentModeScaleAspectFill;
-    } else {
-        self.fullImageView.contentMode = UIViewContentModeScaleAspectFill;
-    }
-
-    [self updateImageBorder];
-
-    self.imageToolbarView.showsSketchButton = !imageMessageData.isAnimatedGIF;
-    self.imageToolbarView.imageIsEphemeral = convMessage.isEphemeral;
-    self.imageToolbarView.isPlacedOnImage = [self imageToolbarFitsInsideImage];
-    self.imageToolbarView.configuration = [self imageToolbarNeedsToBeCompact] ? ImageToolbarConfigurationCompactCell : ImageToolbarConfigurationCell;
-    
-    [self updateImageMessageConstraintConstants];
-    
-    NSData *imageData = imageMessageData.imageData;
-    
-    // If medium image is present, use the medium image
-    if (imageData.length > 0) {
-        
-        BOOL isAnimatedGIF = imageMessageData.isAnimatedGIF;
-        
-        @weakify (self)
-        [imageCache() imageForData:imageData cacheKey:[Message nonNilImageDataIdentifier:convMessage] creationBlock:^id(NSData *data) {
-            
-            id image = nil;
-            
-            if (isAnimatedGIF) {
-                // We MUST make a copy of the data here because FLAnimatedImage doesn't read coredata blobs efficiently
-                NSData *copy = [NSData dataWithBytes:data.bytes length:data.length];
-                image = [[FLAnimatedImage alloc] initWithAnimatedGIFData:copy];
-            } else {
-                
-                CGSize screenSize = [UIScreen mainScreen].nativeBounds.size;
-                CGFloat widthRatio = MIN(screenSize.width / self.imageSize.width, 1.0);
-                CGFloat minimumHeight = self.imageSize.height * widthRatio;
-                CGFloat maxSize = MAX(screenSize.width, minimumHeight);
-                
-                image = [UIImage imageFromData:data withMaxSize:maxSize];
-            }
-            
-            if (image == nil) {
-                ZMLogError(@"Invalid image data returned from sync engine!");
-            }
-            return image;
-            
-        } completion:^(id image, NSString *cacheKey) {
-            @strongify(self);
-            
-            // Double check that our cell's current image is still the same one
-            if (image != nil && self.message != nil && cacheKey != nil && [cacheKey isEqualToString: [Message nonNilImageDataIdentifier:self.message]]) {
-                self.image = image;
-            }
-            else {
-                ZMLogInfo(@"finished loading image but cell is no longer on screen.");
-            }
-        }];
-    }
-    else {
-
-        if (convMessage.isObfuscated) {
-            self.loadingView.hidden = YES;
-            self.obfuscationView.hidden = NO;
-            self.imageToolbarView.hidden = YES;
-        } else {
-            // We did not download the medium image yet, start the progress animation
-            [self.loadingView startProgressAnimation];
-            self.loadingView.hidden = NO;
-        }
-    }
-}
+//- (void)configureForMessage:(id<ZMConversationMessage>)convMessage layoutProperties:(ConversationCellLayoutProperties *)layoutProperties
+//{
+//    if (! [Message isImageMessage:convMessage]) {
+//        return;
+//    }
+//
+//    [super configureForMessage:convMessage layoutProperties:layoutProperties];
+//
+//    id<ZMImageMessageData> imageMessageData = convMessage.imageMessageData;
+//    
+//    // request
+//    [convMessage requestImageDownload]; // there is no harm in calling this if the full content is already available
+//
+//    CGFloat minimumMediaSize = 48.0;
+//    
+//    self.originalImageSize = [self sizeForMessage:imageMessageData];
+//    self.imageSize = CGSizeMake(MAX(minimumMediaSize, self.originalImageSize.width),
+//                                MAX(minimumMediaSize, self.originalImageSize.height));
+//    
+//    if (self.autoStretchVertically) {
+//        self.fullImageView.contentMode = [self imageSmallerThanMinimumSize] ? UIViewContentModeLeft : UIViewContentModeScaleAspectFill;
+//    } else if (self.showsPreview) {
+//        BOOL isSmall = self.imageSize.height < [PreviewHeightCalculator standardCellHeight];
+//        self.fullImageView.contentMode = isSmall ? UIViewContentModeScaleAspectFit : UIViewContentModeScaleAspectFill;
+//    } else {
+//        self.fullImageView.contentMode = UIViewContentModeScaleAspectFill;
+//    }
+//
+//    [self updateImageBorder];
+//
+//    self.imageToolbarView.showsSketchButton = !imageMessageData.isAnimatedGIF;
+//    self.imageToolbarView.imageIsEphemeral = convMessage.isEphemeral;
+//    self.imageToolbarView.isPlacedOnImage = [self imageToolbarFitsInsideImage];
+//    self.imageToolbarView.configuration = [self imageToolbarNeedsToBeCompact] ? ImageToolbarConfigurationCompactCell : ImageToolbarConfigurationCell;
+//    
+//    [self updateImageMessageConstraintConstants];
+//    
+//    NSData *imageData = imageMessageData.imageData;
+//    
+//    // If medium image is present, use the medium image
+//    if (imageData.length > 0) {
+//        
+//        BOOL isAnimatedGIF = imageMessageData.isAnimatedGIF;
+//        
+//        @weakify (self)
+//        [imageCache() imageForData:imageData cacheKey:[Message nonNilImageDataIdentifier:convMessage] creationBlock:^id(NSData *data) {
+//            
+//            id image = nil;
+//            
+//            if (isAnimatedGIF) {///TODO: not gif?
+//                // We MUST make a copy of the data here because FLAnimatedImage doesn't read coredata blobs efficiently
+//                NSData *copy = [NSData dataWithBytes:data.bytes length:data.length];
+//                image = [[FLAnimatedImage alloc] initWithAnimatedGIFData:copy];
+//            } else {
+//                /// hits 2 times here
+//                CGSize screenSize = [UIScreen mainScreen].nativeBounds.size;
+//                CGFloat widthRatio = MIN(screenSize.width / self.imageSize.width, 1.0);
+//                CGFloat minimumHeight = self.imageSize.height * widthRatio;
+//                CGFloat maxSize = MAX(screenSize.width, minimumHeight);
+//                
+//                image = [UIImage imageFromData:data withMaxSize:maxSize];
+//            }
+//            
+//            if (image == nil) {
+//                ZMLogError(@"Invalid image data returned from sync engine!");
+//            }
+//            return image;
+//            
+//        } completion:^(id image, NSString *cacheKey) {
+//            @strongify(self);
+//            
+//            // Double check that our cell's current image is still the same one
+//            if (image != nil && self.message != nil && cacheKey != nil && [cacheKey isEqualToString: [Message nonNilImageDataIdentifier:self.message]]) {
+//                self.image = image;
+//            }
+//            else {
+//                ZMLogInfo(@"finished loading image but cell is no longer on screen.");
+//            }
+//        }];
+//    }
+//    else {
+//
+//        if (convMessage.isObfuscated) {
+//            self.loadingView.hidden = YES;
+//            self.obfuscationView.hidden = NO;
+//            self.imageToolbarView.hidden = YES;
+//        } else {
+//            // We did not download the medium image yet, start the progress animation
+//            [self.loadingView startProgressAnimation];
+//            self.loadingView.hidden = NO;
+//        }
+//    }
+//}
 
 - (void)updateImageBorder
 {

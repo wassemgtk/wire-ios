@@ -96,7 +96,7 @@ public class ThreeDotsLoadingView: UIView {
         }
     }
     
-    func startProgressAnimation() {
+    public func startProgressAnimation() {
         let stepDuration = 0.350
         let colorShift = CAKeyframeAnimation(keyPath: "backgroundColor")
         colorShift.values = [activeColor.cgColor, inactiveColor.cgColor, inactiveColor.cgColor, activeColor.cgColor]
