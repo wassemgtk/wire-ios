@@ -42,7 +42,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"UI";
 @interface ImageMessageCell ()
 
 @property (nonatomic, strong) FLAnimatedImageView *fullImageView;
-@property (nonatomic, strong) UIView *imageViewContainer;
 @property (nonatomic) SavableImage *savableImage;
 @property (nonatomic) UITapGestureRecognizer *imageTapRecognizer;
 

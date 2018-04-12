@@ -38,6 +38,7 @@ static ImageCache *imageCache(void);
 
 @end
 
+
 @interface ImageMessageCell ()
 /// Can either be UIImage or FLAnimatedImage
 @property (nonatomic, strong) id<MediaAsset> image;

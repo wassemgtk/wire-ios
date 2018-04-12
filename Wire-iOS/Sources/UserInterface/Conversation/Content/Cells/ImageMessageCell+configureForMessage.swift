@@ -18,6 +18,8 @@
 
 import Foundation
 
+fileprivate let zmLog = ZMSLog(tag: "ImageMessageCell")
+
 extension ImageMessageCell {
     override open func configure(for convMessage: ZMConversationMessage?, layoutProperties: ConversationCellLayoutProperties?) {
         guard let convMessage = convMessage else { return }
@@ -34,7 +36,7 @@ extension ImageMessageCell {
         if autoStretchVertically {
             fullImageView.contentMode = imageSmallerThanMinimumSize() ? .left : .scaleAspectFill
         } else if showsPreview {
-            var isSmall: Bool = imageSize.height < PreviewHeightCalculator.standardCellHeight
+            let isSmall: Bool = imageSize.height < PreviewHeightCalculator.standardCellHeight
             fullImageView.contentMode = isSmall ? .scaleAspectFit : .scaleAspectFill
         } else {
             fullImageView.contentMode = .scaleAspectFill
@@ -42,7 +44,7 @@ extension ImageMessageCell {
 
         updateImageBorder()
         imageToolbarView.showsSketchButton = !(imageMessageData?.isAnimatedGIF)!
-        imageToolbarView.imageIsEphemeral = (convMessage.isEphemeral)!
+        imageToolbarView.imageIsEphemeral = convMessage.isEphemeral
         imageToolbarView.isPlacedOnImage = imageToolbarFitsInsideImage()
         imageToolbarView.configuration = imageToolbarNeedsToBeCompact() ? .compactCell : .cell
         updateImageMessageConstraintConstants()
@@ -50,47 +52,54 @@ extension ImageMessageCell {
         if let imageData = imageMessageData?.imageData, imageData.count > 0 {
             let isAnimatedGIF: Bool = imageMessageData!.isAnimatedGIF ///TODO: unwrap
 
-            let creationBlock = {(_ data: Data?) -> Any? in
+            let creationBlock = { [weak self] (_ data: Data?) -> Any? in
                 ///TODO weak self
                 
                 var image: Any? = nil
                 if let data = data {
-                if isAnimatedGIF {
-                    ///TODO: not gif?
-                    // We MUST make a copy of the data here because FLAnimatedImage doesn't read coredata blobs efficiently
+                    if isAnimatedGIF {
+                        ///TODO: not gif?
+                        // We MUST make a copy of the data here because FLAnimatedImage doesn't read coredata blobs efficiently
 
-                    let copy = Data(data) // data.copy //Data(bytes: data.bytes, count: data.count)
-                    image = FLAnimatedImage(animatedGIFData: copy)
-                } else {
-                    /// hits 2 times here
-                    var screenSize: CGSize = UIScreen.main.nativeBounds.size
-                    var widthRatio: CGFloat = min(screenSize.width / self.imageSize.width, 1.0)
-                    var minimumHeight: CGFloat = self.imageSize.height * widthRatio
-                    var maxSize: CGFloat = max(screenSize.width, minimumHeight)
-                    image = UIImage(from: data, withMaxSize: maxSize)
-                }
+                        let copy = Data(data) // data.copy //Data(bytes: data.bytes, count: data.count)
+                        image = FLAnimatedImage(animatedGIFData: copy)
+                    } else {
+                        /// hits 2 times here
+                        let screenSize: CGSize = UIScreen.main.nativeBounds.size
+                        var widthRatio: CGFloat = 0
+                        var minimumHeight: CGFloat = 0
+                        if let width = self?.imageSize.width, let height = self?.imageSize.height {
+                            widthRatio = min(screenSize.width / width, 1.0)
+                            minimumHeight = height * widthRatio
+                        }
+                        else {
+                            widthRatio = 1
+                        }
+
+                        let maxSize: CGFloat = max(screenSize.width, minimumHeight)
+                        image = UIImage(from: data, withMaxSize: maxSize)
+                    }
                 }
 
                 if image == nil {
-                    ///TODO:
-//                    ZMLogError("Invalid image data returned from sync engine!")
+                    zmLog.debug("Invalid image data returned from sync engine!")
                 }
                 return image
             }
 
-            imageCache().image(for: imageData, cacheKey: Message.nonNilImageDataIdentifier(convMessage), creationBlock: creationBlock, completion: {(_ image: Any?, _ cacheKey: String?) -> Void in
-                //                strongify(self) ///TODO:
-                if image != nil && self.message != nil && cacheKey != nil && (cacheKey == Message.nonNilImageDataIdentifier(self.message)) {
-                    self.image = image as! UIImage
+            let completion = {[weak self] (_ image: Any?, _ cacheKey: String?) -> Void in
+                if image != nil && self?.message != nil && cacheKey != nil && (cacheKey == Message.nonNilImageDataIdentifier(self?.message)) {
+                    self?.setImage(image as! MediaAsset)
                 } else {
-                    ///TODO:
-//                    ZMLogInfo("finished loading image but cell is no longer on screen.")
+                    zmLog.debug("finished loading image but cell is no longer on screen.")
                 }
 
-            })
+            }
+
+            ImageMessageCell.imageCache().image(for: imageData, cacheKey: Message.nonNilImageDataIdentifier(convMessage), creationBlock: creationBlock, completion: completion)
         }
         else {
-            if convMessage.isObfuscated {///TODO: unwrap
+            if convMessage.isObfuscated {
                 loadingView.isHidden = true
                 obfuscationView.isHidden = false
                 imageToolbarView.isHidden = true
