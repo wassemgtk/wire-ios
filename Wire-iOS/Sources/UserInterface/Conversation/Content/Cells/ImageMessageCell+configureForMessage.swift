@@ -24,9 +24,10 @@ extension ImageMessageCell {
     override open func configure(for convMessage: ZMConversationMessage?, layoutProperties: ConversationCellLayoutProperties?) {
         guard let convMessage = convMessage else { return }
         guard Message.isImage(convMessage) else { return }
+        guard let imageMessageData = convMessage.imageMessageData else { return }
 
         super.configure(for: convMessage, layoutProperties: layoutProperties)
-        let imageMessageData: ZMImageMessageData? = convMessage.imageMessageData
+
         // request
         convMessage.requestImageDownload()
         // there is no harm in calling this if the full content is already available
@@ -43,14 +44,14 @@ extension ImageMessageCell {
         }
 
         updateImageBorder()
-        imageToolbarView.showsSketchButton = !(imageMessageData?.isAnimatedGIF)!
+        imageToolbarView.showsSketchButton = !imageMessageData.isAnimatedGIF
         imageToolbarView.imageIsEphemeral = convMessage.isEphemeral
         imageToolbarView.isPlacedOnImage = imageToolbarFitsInsideImage()
         imageToolbarView.configuration = imageToolbarNeedsToBeCompact() ? .compactCell : .cell
         updateImageMessageConstraintConstants()
 
-        if let imageData = imageMessageData?.imageData, imageData.count > 0 {
-            let isAnimatedGIF: Bool = imageMessageData!.isAnimatedGIF ///TODO: why first call is not animated?
+        if let imageData = imageMessageData.imageData, imageData.count > 0 {
+            let isAnimatedGIF: Bool = imageMessageData.isAnimatedGIF ///TODO: why first call is not animated?
 
             print("🏀 time = \(Date().timeIntervalSince1970) isAnimatedGIF =\(isAnimatedGIF)")
 
@@ -101,7 +102,10 @@ extension ImageMessageCell {
             }
 
             ///FIXME: creationBlock is not called after second refresh, isAnimatedGIF == true
-            ImageMessageCell.imageCache().removeImage(forCacheKey: Message.nonNilImageDataIdentifier(convMessage))
+//            if isAnimatedGIF {
+//                ImageMessageCell.imageCache().removeImage(forCacheKey: Message.nonNilImageDataIdentifier(convMessage))
+//            }
+
             ImageMessageCell.imageCache().image(for: imageData, cacheKey: Message.nonNilImageDataIdentifier(convMessage), creationBlock: creationBlock, completion: completion)
         } else {
             if convMessage.isObfuscated {
