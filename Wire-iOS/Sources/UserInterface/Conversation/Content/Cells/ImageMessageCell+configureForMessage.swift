@@ -50,20 +50,19 @@ extension ImageMessageCell {
         updateImageMessageConstraintConstants()
 
         if let imageData = imageMessageData?.imageData, imageData.count > 0 {
-            let isAnimatedGIF: Bool = imageMessageData!.isAnimatedGIF ///TODO: unwrap
+            let isAnimatedGIF: Bool = imageMessageData!.isAnimatedGIF
 
-            print("🤛 time = \(Date().timeIntervalSince1970) isAnimatedGIF =\(isAnimatedGIF)")
+            print("🏀 time = \(Date().timeIntervalSince1970) isAnimatedGIF =\(isAnimatedGIF)")
 
             let creationBlock = { [weak self] (_ data: Data?) -> Any? in
                 var image: Any? = nil
 
-                print("💡 time = \(Date().timeIntervalSince1970) isAnimatedGIF =\(isAnimatedGIF)")
+                print("🏉 time = \(Date().timeIntervalSince1970) isAnimatedGIF =\(isAnimatedGIF)")
 
                 if let data = data {
                     print("⚽ time = \(Date().timeIntervalSince1970) isAnimatedGIF =\(isAnimatedGIF)")
 
                     if isAnimatedGIF {
-                        ///TODO: not gif?
                         // We MUST make a copy of the data here because FLAnimatedImage doesn't read coredata blobs efficiently
 
                         let copy = Data(data) // data.copy //Data(bytes: data.bytes, count: data.count)
@@ -92,6 +91,7 @@ extension ImageMessageCell {
             }
 
             let completion = {[weak self] (_ image: Any?, _ cacheKey: String?) -> Void in
+                print("🎾 time = \(Date().timeIntervalSince1970) isAnimatedGIF =\(isAnimatedGIF), image = \(String(describing: image))")
                 if image != nil && self?.message != nil && cacheKey != nil && (cacheKey == Message.nonNilImageDataIdentifier(self?.message)) {
                     self?.setImage(image as! MediaAsset)
                 } else {
@@ -100,6 +100,7 @@ extension ImageMessageCell {
 
             }
 
+            ///FIXME: creationBlock is not called after second refresh, isAnimatedGIF == true
             ImageMessageCell.imageCache().image(for: imageData, cacheKey: Message.nonNilImageDataIdentifier(convMessage), creationBlock: creationBlock, completion: completion)
         } else {
             if convMessage.isObfuscated {
