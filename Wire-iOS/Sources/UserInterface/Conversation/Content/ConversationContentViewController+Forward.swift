@@ -191,6 +191,9 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
 
 extension ConversationContentViewController {
     func scroll(to messageToShow: ZMConversationMessage, completion: ((ConversationCell)->())? = .none) {
+        // in case message is deleted when scrolling, e.g. message deleted in another device
+        guard messageToShow.conversation != nil else { return }
+
         guard messageToShow.conversation == self.conversation else {
             fatal("Message from the wrong conversation")
         }

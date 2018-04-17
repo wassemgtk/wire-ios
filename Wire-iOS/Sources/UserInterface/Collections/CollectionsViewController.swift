@@ -308,6 +308,8 @@ final public class CollectionsViewController: UIViewController {
                 message.fileMessageData?.cancelTransfer()
             }
         case .present:
+            guard message.hasBeenDeleted == false else { return } ///TODO: alert, refresh collection view, then dismiss?
+
             self.selectedMessage = message
             Analytics.shared().tagCollectionOpenItem(for: self.collection.conversation, itemType: CollectionItemType(message: message))
             

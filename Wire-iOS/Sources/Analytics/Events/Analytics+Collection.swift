@@ -26,6 +26,7 @@
 
 extension CollectionItemType {
     init(message: ZMConversationMessage) {
+        ///TODO: defends for message is deleted, e.g. guard message.conversation != nil?
         if message.isImage {
             self = .image
         }
