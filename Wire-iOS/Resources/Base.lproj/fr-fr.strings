@@ -1,0 +1,14 @@
+
+"NSContactsUsageDescription" = "Laissez Wire pour accéder à vos contacts pour vous connecter avec d'autres. Nous toutes les informations et anonymes les partageons pas avec quelqu'un d'autre.";
+
+"NSMicrophoneUsageDescription" = "Permettre l'accès fil trop votre microphone afin que vous puissiez parler aux gens et envoyer des messages audio.";
+
+"NSLocationWhenInUseUsageDescription" = "Laissez fil pour accéder à votre emplacement afin que vous puissiez envoyer votre position aux autres.";
+
+"NSCameraUsageDescription" = "Laissez fil pour accéder à votre appareil afin que vous puissiez passer des appels vidéo et envoyer des photos.";
+
+"NSPhotoLibraryAddUsageDescription" = "Laisser fil de stocker des photos que vous prenez dans la photothèque.";
+
+"NSPhotoLibraryUsageDescription" = "Laisser fil d'accéder à des photos stockées dans la bibliothèque de photos.";
+
+"NSFaceIDUsageDescription" = "Afin d'authentifier dans l'application permet fil d'accéder à la fonction d'identification de visage.";
