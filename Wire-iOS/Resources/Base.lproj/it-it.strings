@@ -1,0 +1,14 @@
+
+"NSContactsUsageDescription" = "Lasciare Wire accedere ai tuoi contatti per collegarsi con gli altri. Rendiamo anonimi tutte le informazioni e non condividiamo con chiunque altro.";
+
+"NSMicrophoneUsageDescription" = "Lasciare filo troppo accedere il microfono in modo da poter parlare con la gente e inviare messaggi audio.";
+
+"NSLocationWhenInUseUsageDescription" = "Lasciare filo di accedere alla tua posizione in modo da poter inviare la posizione ad altri.";
+
+"NSCameraUsageDescription" = "Lasciare filo di accedere alla videocamera in modo da poter effettuare chiamate video e inviare foto.";
+
+"NSPhotoLibraryAddUsageDescription" = "Lasciare Wire per memorizzare le immagini scattate nella libreria di foto.";
+
+"NSPhotoLibraryUsageDescription" = "Lasciare Wire per accedere immagini memorizzate nella libreria di foto.";
+
+"NSFaceIDUsageDescription" = "Al fine di autenticare in app permette Wire per accedere alla funzione Face ID.";
