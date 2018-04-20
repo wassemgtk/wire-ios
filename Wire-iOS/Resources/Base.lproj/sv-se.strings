@@ -1,0 +1,14 @@
+
+"NSContactsUsageDescription" = "Låt Wire att få tillgång till dina kontakter för att ansluta dig med andra. Vi anonymisera all information och inte dela den med någon annan.";
+
+"NSMicrophoneUsageDescription" = "Tillåt Wire också tillgång till mikrofonen så att du kan prata med folk och skicka ljudmeddelanden.";
+
+"NSLocationWhenInUseUsageDescription" = "Låt Wire att få tillgång till ett läge så att du kan skicka din plats till andra.";
+
+"NSCameraUsageDescription" = "Låt Wire att få tillgång till din kamera så att du kan placera videosamtal och skicka bilder.";
+
+"NSPhotoLibraryAddUsageDescription" = "Låt Wire att lagra bilder du tar i bildbiblioteket.";
+
+"NSPhotoLibraryUsageDescription" = "Låt Wire att få tillgång till bilder lagrade i bildbiblioteket.";
+
+"NSFaceIDUsageDescription" = "För att autentisera i appen tillåter Wire för att komma åt Face ID-funktionen.";
