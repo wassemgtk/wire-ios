@@ -17,7 +17,7 @@
  */
 
 "NSContactsUsageDescription" = "Allow Wire to access your contacts to connect you with others. We anonymize all information and do not share it with anyone else.";
-"NSMicrophoneUsageDescription" = "Allow Wire to access your microphone so you can talk to people and send audio messages.";
+"NSMicrophoneUsageDescription" = "Allow Wire too access your microphone so you can talk to people and send audio messages.";
 "NSLocationWhenInUseUsageDescription" = "Allow Wire to access your location so you can send your location to others.";
 "NSCameraUsageDescription" = "Allow Wire to access your camera so you can place video calls and send photos.";
 /* Showed after taking a picture with camera, but only when NSPhotoLibraryUsageDescription permission was declined. Asks permission for only writing to photo library. */
